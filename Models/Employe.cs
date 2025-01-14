@@ -23,13 +23,13 @@ public class Employe
     [Column("adresse")]
     public string Adresse { get; set; }
     [Column("manager")]
-    public string Manager { get; set; }
+    public string? Manager { get; set; }
     [Column("id_departement")]
-    [ForeignKey("id_departement")]
-    public int IdDepartement { get; set; }
-    // public Departement? Departement { get; set; }
+    public int? IdDepartement { get; set; }
+    [ForeignKey("IdDepartement")]
+    public Departement? Departement { get; set; }
     [Column("id_poste")] 
-    [ForeignKey("id_poste")]
     public int IdPoste { get; set; }
-    // public Poste? Poste { get; set; }
+    [ForeignKey("IdPoste")]
+    public Poste? Poste { get; set; }
 }

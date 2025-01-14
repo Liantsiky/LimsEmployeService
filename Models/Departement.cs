@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace LimsEmployeService.Models;
 [Table("Departement")]
@@ -12,4 +13,8 @@ public class Departement
     public string? Code { get; set; }
     [Column("designation")]
     public string? Designation { get; set; }
+
+    [JsonIgnore]
+    public ICollection<Employe>? Employes { get; set; }
+
 }
