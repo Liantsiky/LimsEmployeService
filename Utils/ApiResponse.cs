@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 // using LimsBffWeb.Models;
 
-namespace EmployeService.Utils;
+namespace LimsEmployeService.Utils;
 
 public class ApiResponse // Generic response wrapper
 {

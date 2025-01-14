@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using EmployeService.Data;
-using EmployeService.Models;
+using LimsEmployeService.Data;
+using LimsEmployeService.Models;
 using Microsoft.EntityFrameworkCore;
 
-using EmployeService.Utils;
+using LimsEmployeService.Utils;
 
-namespace EmployeService.Controllers;
+namespace LimsEmployeService.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -18,20 +18,7 @@ public class PosteController : ControllerBase
         _context = context;
     }
 
-    // GET: api/poste
     [HttpGet]
-    // public async Task<ActionResult<IEnumerable<Poste>>> GetPostes()
-    // {
-    //     List<Poste> postes = await _context.Postes.ToListAsync();
-    //     return Ok(new ApiResponse
-    //     {
-    //         Data = postes,
-    //         ViewBag = null,
-    //         IsSuccess = true,
-    //         Message = "Data retrieved successfully",
-    //         StatusCode = 200
-    //     });
-    // }
     public async Task<ActionResult> GetPoste(int position, int pageSize)
     {
         if (position == 0) position = 1;
@@ -55,7 +42,7 @@ public class PosteController : ControllerBase
     }
     // GET: api/poste/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Poste>> GetPoste(int id)
+    public async Task<ActionResult<Poste>> GetPosteDetails(int id)
     {
         var poste = await _context.Postes.FindAsync(id);
 
@@ -76,7 +63,7 @@ public class PosteController : ControllerBase
 
     // POST: api/poste
     [HttpPost]
-    public async Task<ActionResult<Poste>> PostPoste(Poste poste)
+    public async Task<ActionResult<Poste>> CreatePoste(Poste poste)
     {
         _context.Postes.Add(poste);
         await _context.SaveChangesAsync();
@@ -93,7 +80,7 @@ public class PosteController : ControllerBase
 
     // PUT: api/poste/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutPoste(int id, Poste poste)
+    public async Task<IActionResult> UpdatePoste(int id, Poste poste)
     {
         if (id != poste.IdPoste)
         {
