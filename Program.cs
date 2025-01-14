@@ -1,5 +1,8 @@
-using EmployeService.Data;  
+using LimsEmployeService.Data;
+using LimsEmployeService.Service;
 using Microsoft.EntityFrameworkCore;
+
+// TODO Switch branch before development
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,11 +22,12 @@ builder.Services.AddCors(options =>
     options.AddPolicy("MyCorsPolicy", builder =>
     {
         builder.WithOrigins("http://localhost:5077") // Replace with your client's origin
-               .AllowAnyMethod()
-               .AllowAnyHeader()
-               .AllowCredentials(); // If you need to send cookies or authentication headers
+               .AllowAnyMethod();
     });
 });
+
+// For injection to controller
+builder.Services.AddScoped<IEmployeService, EmployeService>();
 
 builder.Services.AddControllers();
 var app = builder.Build();
@@ -34,27 +38,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
 app.UseHttpsRedirection();
 
 app.UseCors("MyCorsPolicy"); // Make sure this is called before app.UseAuthorization()
@@ -62,8 +45,3 @@ app.UseCors("MyCorsPolicy"); // Make sure this is called before app.UseAuthoriza
 app.MapControllers(); // This line is crucial ! 
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

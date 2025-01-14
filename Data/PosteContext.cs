@@ -1,16 +1,27 @@
 using Microsoft.EntityFrameworkCore;
-using EmployeService.Models;
+using LimsEmployeService.Models;
 
-namespace EmployeService.Data;
+namespace LimsEmployeService.Data;
 
 public class PosteContext : DbContext
 {
     public PosteContext(DbContextOptions<PosteContext> options) : base(options) { }
 
     public DbSet<Poste> Postes { get; set; }
+    public DbSet<Employe> Employes { get; set; }
 
      protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Poste>()
+        .HasMany(e => e.Employes)
+        .WithOne(e => e.Poste)
+        .HasForeignKey(e => e.IdPoste)
+        .HasPrincipalKey(e => e.IdPoste);
+
+        modelBuilder.Entity<Departement>()
+        .HasMany(e => e.Employes)
+        .WithOne(e => e.Departement)
+        .HasForeignKey(e => e.IdDepartement)
+        .HasPrincipalKey(e => e.IdDepartement);
     }
 }
