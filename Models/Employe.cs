@@ -16,8 +16,8 @@ public class Employe
     public string Prenom { get; set; }
     [Column("genre")]
     public int Genre { get; set; }
-    [Column("CIN")]
-    public string CIN { get; set; }
+    [Column("cin")]
+    public string Cin { get; set; }
     [Column("contact")]
     public string Contact { get; set; }
     [Column("adresse")]
