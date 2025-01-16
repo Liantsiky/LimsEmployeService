@@ -1,21 +1,36 @@
 using Microsoft.AspNetCore.Mvc;
-using LimsEmployeService.Data;
 using LimsEmployeService.Models;
 using Microsoft.EntityFrameworkCore;
 
 using LimsEmployeService.Utils;
+using LimsEmployeService.Service;
 
 namespace LimsEmployeService.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/poste")]
 public class PosteController : ControllerBase
 {
-    private readonly PosteContext _context;
+    private readonly IPosteService _posteService;
 
-    public PosteController(PosteContext context)
+    public PosteController(IPosteService posteService)
     {
-        _context = context;
+        _posteService = posteService;
+    }
+
+    [HttpGet]
+    [Route("/api/poste/all")]
+    public async Task<ActionResult<ApiResponse>> GetAllPostes()
+    {
+        List<Poste> postes = await _posteService.GetPostes();
+        return Ok(new ApiResponse
+        {
+            Data = postes,
+            ViewBag = null,
+            IsSuccess = true,
+            Message = "Datas retrieved successfully.",
+            StatusCode = 200
+        });
     }
 
     [HttpGet]
@@ -24,13 +39,13 @@ public class PosteController : ControllerBase
         if (position == 0) position = 1;
         if (pageSize == 0) pageSize = 2;
         Dictionary<string, object> response = new Dictionary<string, object>();
-        int nbrPerPage = pageSize;
-        response["nbrPerPage"] = nbrPerPage;
-        response["TotalCount"] = _context.Postes.Count();
-        response["nbrLinks"] = Math.Ceiling((double)_context.Postes.Count() / nbrPerPage);
+        response["nbrPerPage"] = pageSize;
+        response["TotalCount"] = _posteService.CountPostes();
+        response["nbrLinks"] = Math.Ceiling((double)_posteService.CountPostes() / pageSize);
 
             response["position"] = position;
-            List<Poste> postes = await _context.Postes.Skip(((int)response["position"]-1) * nbrPerPage).Take(nbrPerPage).ToListAsync();
+            int skiped = (position-1) * pageSize;
+            List<Poste> postes = await _posteService.GetPostesFrom(skiped, pageSize);
             return Ok(new ApiResponse
             {
                 Data = postes,
@@ -44,12 +59,8 @@ public class PosteController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Poste>> GetPosteDetails(int id)
     {
-        var poste = await _context.Postes.FindAsync(id);
-
-        if (poste == null)
-        {
-            return NotFound();
-        }
+        Poste poste = await _posteService.GetPoste(id);
+        if(poste == null) return NotFound();
 
         return Ok(new ApiResponse
         {
@@ -65,66 +76,39 @@ public class PosteController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Poste>> CreatePoste(Poste poste)
     {
-        _context.Postes.Add(poste);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetPoste), new { id = poste.IdPoste }, new ApiResponse 
+        Dictionary<string, object> response = new Dictionary<string, object>();
+        Poste createdEmploye = await _posteService.CreatePoste(poste);
+        return CreatedAtAction(nameof(GetPoste), new { id = createdEmploye}, new ApiResponse
         {
             Data = poste,
             ViewBag = null,
             IsSuccess = true,
-            Message = "Data created successfully",
+            Message = "Created successfully",
             StatusCode = 201
         });
     }
 
     // PUT: api/poste/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdatePoste(int id, Poste poste)
+    public async Task<IActionResult> UpdatePoste(int? id, Poste poste)
     {
-        if (id != poste.IdPoste)
+        if(id == null) return NotFound();
+        Poste updatedPoste =await _posteService.EditPoste(poste);
+        return CreatedAtAction(nameof(GetPoste), new { id = updatedPoste.IdPoste }, new ApiResponse
         {
-            return BadRequest();
-        }
-
-        _context.Entry(poste).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!_context.Postes.Any(e => e.IdPoste == id))
-            {
-                return NotFound();
-            }
-            throw;
-        }
-
-        return CreatedAtAction(nameof(GetPoste), new { id = poste.IdPoste }, new ApiResponse 
-        {
-            Data = await _context.Postes.FirstOrDefaultAsync(p => p.IdPoste == poste.IdPoste),
+            Data = updatedPoste,
             ViewBag = null,
             IsSuccess = true,
-            Message = "Data created successfully",
+            Message = "Created successfully",
             StatusCode = 201
-        });;
+        });
     }
 
     // DELETE: api/poste/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePoste(int id)
     {
-        var poste = await _context.Postes.FindAsync(id);
-        if (poste == null)
-        {
-            return NotFound();
-        }
-
-        _context.Postes.Remove(poste);
-        await _context.SaveChangesAsync();
-
+        await _posteService.DeletePoste(id);
         return NoContent();
     }
 }

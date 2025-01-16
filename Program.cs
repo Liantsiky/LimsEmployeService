@@ -28,6 +28,7 @@ builder.Services.AddCors(options =>
 
 // For injection to controller
 builder.Services.AddScoped<IEmployeService, EmployeService>();
+builder.Services.AddScoped<IPosteService, PosteService>();
 
 builder.Services.AddControllers();
 var app = builder.Build();
