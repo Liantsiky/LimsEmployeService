@@ -9,6 +9,6 @@ public interface IPosteService
     Task<Poste> CreatePoste(Poste poste);
     Task<bool> DeletePoste(int id);
     Task<Poste> EditPoste(Poste poste);
-    int CountPoste();
+    int CountPostes();
     Task<List<Poste>> GetPostesFrom(int skiped, int size);
 }
