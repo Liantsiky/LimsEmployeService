@@ -11,7 +11,7 @@ public class Poste
     [Column("id_poste")]
     public int IdPoste { get; set; }
     [Column("designation")]
-    public string Designation { get; set; }
+    public string? Designation { get; set; }
     [JsonIgnore]
     public ICollection<Employe>? Employes { get; set; }
 }
