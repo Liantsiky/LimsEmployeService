@@ -1,4 +1,5 @@
 using LimsEmployeService.Models;
+using LimsEmployeService.Service;
 using LimsEmployeService.Utils;
 using Microsoft.AspNetCore.Mvc;
 
