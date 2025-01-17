@@ -1,3 +1,5 @@
+namespace LimsEmployeService.Service;
+
 using LimsEmployeService.Models;
 
 public interface IEmployeService
