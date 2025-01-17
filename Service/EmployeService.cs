@@ -12,15 +12,15 @@ public class EmployeService : IEmployeService
         _dbContext = dbContext;
     }
 
-    public int CountEmployes()
+    public async Task<int> CountEmployes()
     {
-        int result = _dbContext.Employes.Count();
+        int result = await _dbContext.Employes.CountAsync();
         return result;
     }
 
     public async Task<List<Employe>> GetEmployesFrom(int skiped, int size)
     {        
-        List<Employe> results = await _dbContext.Employes.Skip(skiped).Take(size).
+        List<Employe> results = await _dbContext.Employes.OrderByDescending(e => e.IdEmploye).Skip(skiped).Take(size).
             Include(employe => employe.Poste).
             Include(employe => employe.Departement)
             .ToListAsync();
