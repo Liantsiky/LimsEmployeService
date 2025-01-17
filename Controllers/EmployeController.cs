@@ -14,14 +14,30 @@ public class EmployeController : ControllerBase
     }
 
     [HttpGet]
+    [Route("/api/employe/total")]
+    public async Task<ActionResult<ApiResponse>> GetTotalEmployees()
+    {
+        int totalEmpRows = await _employeService.CountEmployes();
+        return Ok(new ApiResponse
+        {
+            Data = totalEmpRows,
+            ViewBag = null,
+            IsSuccess = true,
+            Message = "Total employees retrieved successfully.",
+            StatusCode = 200
+        });
+    }
+
+    [HttpGet]
     public async Task<ActionResult<ApiResponse>> GetEmployes(int position, int pageSize)
     {
         if (position == 0) position = 1;
         if (pageSize == 0) pageSize = 2;
         Dictionary<string, object> response = new Dictionary<string, object>();
         response["nbrPerPage"] = pageSize;
-        response["TotalCount"] = _employeService.CountEmployes();
-        response["nbrLinks"] = Math.Ceiling((double)_employeService.CountEmployes() / pageSize);
+        int totalEmpRows = await _employeService.CountEmployes();
+        response["TotalCount"] = totalEmpRows;
+        response["nbrLinks"] = Math.Ceiling((double)totalEmpRows / pageSize);
 
             response["position"] = position;
             int skiped = (position-1) * pageSize;
@@ -55,7 +71,6 @@ public class EmployeController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ApiResponse>> CreateEmploye(Employe employe)
     {
-        Dictionary<string, object> response = new Dictionary<string, object>();
         Employe createdEmploye = await _employeService.CreateEmploye(employe);
         return CreatedAtAction(nameof(GetEmploye), new { id = createdEmploye}, new ApiResponse
         {
