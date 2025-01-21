@@ -9,6 +9,7 @@ public class PosteContext : DbContext
 
     public DbSet<Poste> Postes { get; set; }
     public DbSet<Employe> Employes { get; set; }
+    public DbSet<HistoriqueEmploye> HistoriqueEmployes { get; set; }
 
      protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -23,5 +24,11 @@ public class PosteContext : DbContext
         .WithOne(e => e.Departement)
         .HasForeignKey(e => e.IdDepartement)
         .HasPrincipalKey(e => e.IdDepartement);
+
+        modelBuilder.Entity<Employe>()
+        .HasMany(e => e.HistoriqueEmployes)
+        .WithOne(e => e.Employe)
+        .HasForeignKey(e => e.IdEmploye)
+        .HasPrincipalKey(e => e.IdEmploye);
     }
 }

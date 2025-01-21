@@ -33,6 +33,7 @@ public class EmployeService : IEmployeService
         Employe result = await _dbContext.Employes.
             Include(employe => employe.Poste)
             .Include(employe => employe.Departement)
+            .Include(employe => employe.HistoriqueEmployes)
             .Where(e => e.IdEmploye == id)
             .FirstAsync();
         return result;
@@ -40,9 +41,7 @@ public class EmployeService : IEmployeService
 
     public async Task<Employe> CreateEmploye(Employe employe)
     {
-        _dbContext.Employes.Add(employe);
-        await _dbContext.SaveChangesAsync();
-        Employe result = await _dbContext.Employes.OrderBy(e => e.IdEmploye).LastAsync();
+        Employe result = await employe.Insert(_dbContext, this);
 
         return result;
     }
