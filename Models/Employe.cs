@@ -1,37 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using LimsEmployeService.Data;
-using LimsEmployeService.Service;
 
 namespace LimsEmployeService.Models;
 [Table("Employe")]
 public class Employe
 {
-    public async Task<Employe> Insert(PosteContext dbContext, EmployeService employeService)
-    {
-        Employe result = new Employe();
-        using(var transaction = await dbContext.Database.BeginTransactionAsync())
-        {
-            try
-            {
-                dbContext.Employes.Add(this);
-                await dbContext.SaveChangesAsync();
-
-                await transaction.CommitAsync();
-            }
-            catch (System.Exception)
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-            result = await employeService.GetEmploye(this.IdEmploye);
-        }
-
-        return result;
-    }
-
     [Key]
     [Column("id_employe")]
     public int IdEmploye { get; set; }
