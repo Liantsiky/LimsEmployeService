@@ -33,6 +33,6 @@ public class Employe
     [ForeignKey("IdPoste")]
     public Poste? Poste { get; set; }
 
-    public ICollection<HistoriqueEmploye>? HistoriqueEmployes { get; set; }
+    public ICollection<HistoriqueEmploye> HistoriqueEmployes { get; set; }
 
 }
