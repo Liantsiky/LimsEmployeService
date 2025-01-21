@@ -32,4 +32,7 @@ public class Employe
     public int IdPoste { get; set; }
     [ForeignKey("IdPoste")]
     public Poste? Poste { get; set; }
+
+    public ICollection<HistoriqueEmploye> HistoriqueEmployes { get; set; }
+
 }
