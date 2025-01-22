@@ -10,7 +10,6 @@ public class HistoriqueEmploye
     [Key]
     [Column("id_historique_employe")]
     public int IdHistoriqueEmploye { get; set; }
-
     [Column("date_debut")]
     public DateTime DateDebut { get; set; }
     [Column("date_fin")]
@@ -20,7 +19,7 @@ public class HistoriqueEmploye
     [ForeignKey("IdPoste")]
     public Poste? Poste { get; set; }
     [Column("id_employe")]
-    public int IdEmploye { get; set; }
+    public int? IdEmploye { get; set; }
     [ForeignKey("IdEmploye")]
     [JsonIgnore]
     public Employe? Employe { get; set; }
