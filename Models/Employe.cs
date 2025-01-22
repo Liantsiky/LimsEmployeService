@@ -1,10 +1,35 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
+using LimsEmployeService.Dtos;
 
 namespace LimsEmployeService.Models;
 [Table("Employe")]
 public class Employe
 {
+    public async Task<Employe> HandleDtosForInsert(EmployeDto employe)
+    {
+        Employe result = new Employe();
+        string dtoAsJson = JsonSerializer.Serialize(employe);
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+        result = JsonSerializer.Deserialize<Employe>(dtoAsJson, options);
+        result.HistoriqueEmployes = new List<HistoriqueEmploye>();
+        Console.WriteLine(dtoAsJson);
+        Console.WriteLine(JsonSerializer.Serialize(result));
+
+        // Nouveau poste
+        HistoriqueEmploye historique = new HistoriqueEmploye();
+        historique.DateDebut = employe.DateNouveauPoste;
+        historique.IdPoste = employe.IdPoste;
+
+        result.HistoriqueEmployes.Add(historique);
+
+        return result;
+    }
+
     [Key]
     [Column("id_employe")]
     public int IdEmploye { get; set; }
