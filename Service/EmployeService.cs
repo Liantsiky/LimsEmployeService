@@ -1,4 +1,5 @@
 using LimsEmployeService.Data;
+using LimsEmployeService.Dtos;
 using LimsEmployeService.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,10 +40,13 @@ public class EmployeService : IEmployeService
         return result;
     }
 
-    public async Task<Employe> CreateEmploye(Employe employe)
+    public async Task<Employe> CreateEmploye(EmployeDto employe)
     {
         Employe result = new Employe();
-        _dbContext.Employes.Add(employe);
+
+        result = await result.HandleDtosForInsert(employe);
+
+        _dbContext.Employes.Add(result);
         await _dbContext.SaveChangesAsync();
         result = await GetEmploye(employe.IdEmploye);
 

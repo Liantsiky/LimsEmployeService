@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using LimsEmployeService.Dtos;
 using LimsEmployeService.Models;
 using LimsEmployeService.Service;
 using LimsEmployeService.Utils;
@@ -71,7 +72,7 @@ public class EmployeController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ApiResponse>> CreateEmploye([FromBody] Employe employe)
+    public async Task<ActionResult<ApiResponse>> CreateEmploye([FromBody] EmployeDto employe)
     {
         Employe createdEmploye = await _employeService.CreateEmploye(employe);
         return CreatedAtAction(nameof(GetEmploye), new { id = createdEmploye}, new ApiResponse
