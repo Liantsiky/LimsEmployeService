@@ -67,13 +67,16 @@ public class EmployeService : IEmployeService
         return isDeleted;
     }
 
-    public async Task<Employe> EditEmploye(Employe employe)
+    public async Task<Employe> EditEmploye(EmployeDto employe)
     {
         int id = employe.IdEmploye;
-        _dbContext.Employes.Update(employe);
+        Employe result = new Employe();
+        Employe empToUpdate = await result.HandleDtoForUpdate(employe, _dbContext);   
+
+        _dbContext.Employes.Update(empToUpdate);
         await _dbContext.SaveChangesAsync();
 
-        Employe result = await GetEmploye(id);
+        result = await GetEmploye(id);
         return result;
     }
 }
