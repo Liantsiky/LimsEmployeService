@@ -11,9 +11,9 @@ public class HistoriqueEmploye
     [Column("id_historique_employe")]
     public int IdHistoriqueEmploye { get; set; }
     [Column("date_debut")]
-    public DateTime DateDebut { get; set; }
+    public DateOnly DateDebut { get; set; }
     [Column("date_fin")]
-    public DateTime? DateFin { get; set; }
+    public DateOnly? DateFin { get; set; }
     [Column("id_poste")]
     public int IdPoste { get; set; }
     [ForeignKey("IdPoste")]

@@ -1,24 +1,61 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
+using LimsEmployeService.Data;
 using LimsEmployeService.Dtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace LimsEmployeService.Models;
 [Table("Employe")]
 public class Employe
 {
-    public async Task<Employe> HandleDtosForInsert(EmployeDto employe)
+
+    private async Task<Employe> DtoToEmploye(EmployeDto employeDto)
     {
         Employe result = new Employe();
-        string dtoAsJson = JsonSerializer.Serialize(employe);
+        string dtoAsJson = JsonSerializer.Serialize(employeDto);
         var options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
         result = JsonSerializer.Deserialize<Employe>(dtoAsJson, options);
+        return result;
+    }
+
+    public HistoriqueEmploye GetLastPoste()
+    {
+        HistoriqueEmploye result = null;
+        int lastIndex = this.HistoriqueEmployes.Count - 1;
+        result = this.HistoriqueEmployes.ElementAt(lastIndex);
+        return result;
+    }
+
+    public async Task<Employe> HandleDtoForUpdate(EmployeDto employe, PosteContext dbContext)
+    {
+        Employe result = new Employe();
+        result = await DtoToEmploye(employe);
+        result.HistoriqueEmployes = await dbContext.HistoriqueEmployes
+            .Where(h => h.IdEmploye == result.IdEmploye)
+            .ToListAsync();
+
+        HistoriqueEmploye lastPoste = result.GetLastPoste();
+        lastPoste.DateFin = employe.DateFinPoste;
+        HistoriqueEmploye newPoste = new HistoriqueEmploye();
+        newPoste.DateDebut = employe.DateNouveauPoste;
+        newPoste.IdPoste = employe.IdPoste;
+        result.HistoriqueEmployes.Add(newPoste);
+        result.Poste = null;
+        result.Departement = null;
+
+        return result;
+    }
+    public async Task<Employe> HandleDtosForInsert(EmployeDto employe)
+    {
+        Employe result = new Employe();
+        
+        result = await DtoToEmploye(employe);
+
         result.HistoriqueEmployes = new List<HistoriqueEmploye>();
-        Console.WriteLine(dtoAsJson);
-        Console.WriteLine(JsonSerializer.Serialize(result));
 
         // Nouveau poste
         HistoriqueEmploye historique = new HistoriqueEmploye();
@@ -53,11 +90,11 @@ public class Employe
     public int? IdDepartement { get; set; }
     [ForeignKey("IdDepartement")]
     public Departement? Departement { get; set; }
-    [Column("id_poste")] 
+    [Column("id_poste")]
     public int IdPoste { get; set; }
     [ForeignKey("IdPoste")]
     public Poste? Poste { get; set; }
 
-    public ICollection<HistoriqueEmploye> HistoriqueEmployes { get; set; }
+    public ICollection<HistoriqueEmploye> HistoriqueEmployes { get; set; } = new List<HistoriqueEmploye>();
 
 }

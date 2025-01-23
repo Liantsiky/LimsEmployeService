@@ -93,7 +93,7 @@ public class EmployeController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<ApiResponse>> UpdateEmploye(int? id, Employe employe)
+    public async Task<ActionResult<ApiResponse>> UpdateEmploye(int? id, EmployeDto employe)
     {
         if(id == null) return NotFound();
         Employe updatedEmploye =await _employeService.EditEmploye(employe);

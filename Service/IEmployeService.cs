@@ -10,5 +10,5 @@ public interface IEmployeService
     Task<Employe> GetEmploye(int id);
     Task<Employe> CreateEmploye(EmployeDto employe);
     Task<bool> DeleteEmploye(int id);
-    Task<Employe> EditEmploye(Employe employe);
+    Task<Employe> EditEmploye(EmployeDto employe);
 }

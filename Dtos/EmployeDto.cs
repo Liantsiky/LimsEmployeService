@@ -31,10 +31,32 @@ public class EmployeDto
     public int IdPoste { get; set; }
     [JsonPropertyName("poste")]
     public Poste? Poste { get; set; }
+    [JsonIgnore]
+    public DateOnly _dateNouveauPoste;
+    [JsonIgnore]
+    public DateOnly? _dateFinPoste;
     [JsonPropertyName("dateNouveauPoste")]
-    public DateTime DateNouveauPoste { get; set; }
+    public DateOnly DateNouveauPoste { 
+        get => _dateNouveauPoste;
+        set {
+            if(value > DateOnly.FromDateTime(DateTime.Now)){
+                throw new ArgumentException("Date de nouveau poste ne peut pas être dans le futur.");
+            }
+            if(_dateFinPoste != null){
+                if(value < _dateFinPoste.Value){
+                    throw new ArgumentException("Date de fin de poste ne peut pas être antérieure à la date de début de poste.");
+                }
+            }
+            _dateNouveauPoste = value;
+        }
+    }
+    // TODO There is somthing wrong here, we cannot write in the input of this date
     [JsonPropertyName("dateFinAncienPoste")]
-    public DateTime? DateFinPoste { get; set; }
+    public DateOnly? DateFinPoste { 
+        get => _dateFinPoste; 
+        set => _dateFinPoste = value;
+    }
     [JsonPropertyName("historiqueEmployes")]
     public ICollection<HistoriqueEmployeDto> HistoriqueEmployes = new List<HistoriqueEmployeDto>();
+
 }
