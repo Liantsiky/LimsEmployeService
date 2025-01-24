@@ -67,6 +67,23 @@ public class Employe
         return result;
     }
 
+    public async Task<Employe> HandleDtoForDelete(EmployeDto employe, PosteContext dbContext)
+    {
+        Employe result = new Employe();
+        result = await DtoToEmploye(employe);
+        result.HistoriqueEmployes = await dbContext.HistoriqueEmployes
+            .Where(h => h.IdEmploye == result.IdEmploye)
+            .ToListAsync();
+
+        HistoriqueEmploye lastPoste = result.GetLastPoste();
+        lastPoste.DateFin = employe.DateFinPoste;
+        result.Statut = 5;
+        result.Poste = null;
+        result.Departement = null;
+
+        return result;
+    }
+
     [Key]
     [Column("id_employe")]
     public int IdEmploye { get; set; }
@@ -94,6 +111,8 @@ public class Employe
     public int IdPoste { get; set; }
     [ForeignKey("IdPoste")]
     public Poste? Poste { get; set; }
+    [Column("statut")]
+    public int Statut { get; set; }
 
     public ICollection<HistoriqueEmploye> HistoriqueEmployes { get; set; } = new List<HistoriqueEmploye>();
 

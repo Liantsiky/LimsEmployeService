@@ -9,6 +9,6 @@ public interface IEmployeService
     Task<List<Employe>> GetEmployesFrom(int skiped, int size);
     Task<Employe> GetEmploye(int id);
     Task<Employe> CreateEmploye(EmployeDto employe);
-    Task<bool> DeleteEmploye(int id);
+    Task<bool> DeleteEmploye(int id, EmployeDto employe);
     Task<Employe> EditEmploye(EmployeDto employe);
 }

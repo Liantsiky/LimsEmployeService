@@ -85,10 +85,10 @@ public class EmployeController : ControllerBase
         });
     }
 
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteEmploye(int id)
+    [HttpPut("delete/{id}")]
+    public async Task<ActionResult> DeleteEmploye(int id, [FromBody] EmployeDto employe)
     {
-        await _employeService.DeleteEmploye(id);
+        bool result =await _employeService.DeleteEmploye(id, employe);
         return NoContent();
     }
 
