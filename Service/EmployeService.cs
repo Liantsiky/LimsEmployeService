@@ -1,3 +1,4 @@
+using System.Text.Json;
 using LimsEmployeService.Data;
 using LimsEmployeService.Dtos;
 using LimsEmployeService.Models;
@@ -21,8 +22,10 @@ public class EmployeService : IEmployeService
 
     public async Task<List<Employe>> GetEmployesFrom(int skiped, int size)
     {        
-        List<Employe> results = await _dbContext.Employes.OrderByDescending(e => e.IdEmploye).Skip(skiped).Take(size).
-            Include(employe => employe.Poste).
+        List<Employe> results = await _dbContext.Employes
+            .Where(e => e.Statut == 0)
+            .OrderByDescending(e => e.IdEmploye).Skip(skiped).Take(size)
+            .Include(employe => employe.Poste).
             Include(employe => employe.Departement)
             .ToListAsync();
 
@@ -53,18 +56,23 @@ public class EmployeService : IEmployeService
         return result;
     }
 
-    public async Task<bool> DeleteEmploye(int id)
+    public async Task<bool> DeleteEmploye(int id, EmployeDto employe)
     {
-        bool isDeleted = false;
-        Employe? employe = await _dbContext.Employes.FirstOrDefaultAsync(e => e.IdEmploye == id);
-        if(employe == null)
+        bool result = false;
+        try{
+            Employe emp = new Employe();
+            Employe empToUpdate = await emp.HandleDtoForDelete(employe, _dbContext);  
+            Console.WriteLine(JsonSerializer.Serialize(empToUpdate)); 
+
+            _dbContext.Employes.Update(empToUpdate);
+            await _dbContext.SaveChangesAsync();
+        }catch (Exception)
         {
-            throw new ArgumentException("L'employe que vous souhaitez supprimer n'est pas dans la base de données");
+            throw;
         }
-        _dbContext.Employes.Remove(employe);
-        await _dbContext.SaveChangesAsync();
-        isDeleted = true;
-        return isDeleted;
+
+        result = true;
+        return result;
     }
 
     public async Task<Employe> EditEmploye(EmployeDto employe)

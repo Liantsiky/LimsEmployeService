@@ -56,6 +56,8 @@ public class EmployeDto
         get => _dateFinPoste; 
         set => _dateFinPoste = value;
     }
+    [JsonPropertyName("statut")]
+    public int Statut { get; set; }
     [JsonPropertyName("historiqueEmployes")]
     public ICollection<HistoriqueEmployeDto> HistoriqueEmployes = new List<HistoriqueEmployeDto>();
 
