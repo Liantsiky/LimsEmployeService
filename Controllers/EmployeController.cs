@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using LimsEmployeService.Dtos;
 using LimsEmployeService.Models;
 using LimsEmployeService.Service;

@@ -25,8 +25,8 @@ public class EmployeService : IEmployeService
         List<Employe> results = await _dbContext.Employes
             .Where(e => e.Statut == 0)
             .OrderByDescending(e => e.IdEmploye).Skip(skiped).Take(size)
-            .Include(employe => employe.Poste).
-            Include(employe => employe.Departement)
+            .Include(employe => employe.Poste)
+            .Include(employe => employe.Departement)
             .ToListAsync();
 
         return results;
