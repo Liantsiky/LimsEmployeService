@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using LimsEmployeService.Models;
-using Microsoft.EntityFrameworkCore;
-
-using LimsEmployeService.Utils;
 using LimsEmployeService.Service;
+using LimsUtils.Api;
 
 namespace LimsEmployeService.Controllers;
 
