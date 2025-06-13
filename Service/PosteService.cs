@@ -64,7 +64,6 @@ public class PosteService : IPosteService
     public async Task<List<Poste>> GetPostes()
     {
         List<Poste> results = await _dbContext.Postes
-        .Where(p => p.Designation != "DLAB" && p.Designation != "ADDLAB")
         .ToListAsync();
         return results;
     }

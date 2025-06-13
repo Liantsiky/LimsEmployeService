@@ -9,14 +9,18 @@ namespace LimsEmployeService.Service;
 public class EmployeService : IEmployeService
 {
     private readonly PosteContext _dbContext;
-    public EmployeService(PosteContext dbContext)
+    private readonly IPosteService _posteService;
+    public EmployeService(PosteContext dbContext, IPosteService posteService)
     {
         _dbContext = dbContext;
+        _posteService = posteService;
     }
 
     public async Task<int> CountEmployes()
     {
-        int result = await _dbContext.Employes.CountAsync();
+        int result = await _dbContext.Employes
+        .Where(e => e.Statut == 0)
+        .CountAsync();
         return result;
     }
 
@@ -48,6 +52,18 @@ public class EmployeService : IEmployeService
         Employe result = new Employe();
 
         result = await result.HandleDtosForInsert(employe);
+        Employe? employeSurLePoste = await _dbContext.Employes
+            .Where(e => e.IdPoste == result.IdPoste && e.Statut == 0)
+            .Include(e => e.Poste)
+            .FirstOrDefaultAsync();
+        Console.WriteLine(JsonSerializer.Serialize(employeSurLePoste));
+        if(employeSurLePoste != null)
+        {
+            if (employeSurLePoste!.Poste!.Designation == "DLAB" || employeSurLePoste!.Poste!.Designation == "ADDLAB")
+            {
+                throw new ArgumentException("Ce poste ne peut pas être occupé par deux employés");
+            }
+        }
 
         _dbContext.Employes.Add(result);
         await _dbContext.SaveChangesAsync();
